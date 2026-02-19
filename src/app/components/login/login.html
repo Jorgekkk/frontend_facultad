@@ -1,0 +1,15 @@
+<div class="auth-wrapper">
+  <div class="welcome-section">
+    <h1>VEN FCC</h1>
+    <p>Tu plataforma de venta productos en tu comunidad FCC.</p>
+  </div>
+
+<div class="auth-container">
+  <h2>Iniciar Sesión</h2>
+  <form (ngSubmit)="onLogin()">
+    <input type="text" placeholder="Username" name="username" [(ngModel)]="credentials.username" required>
+    <input type="password" placeholder="Password" name="password" [(ngModel)]="credentials.password" required>
+    <button type="submit">Entrar</button>
+  </form>
+  <p>¿No tienes cuenta? <a routerLink="/registro">Regístrate aquí</a></p>
+</div>

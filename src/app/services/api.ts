@@ -6,17 +6,28 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://127.0.0.1:8000/api/productos/';
+  private productosUrl = 'http://127.0.0.1:8000/api/productos/';
   private pagoUrl = 'http://127.0.0.1:8000/api/crear-pago/'; // URL para Mercado Pago
+  private usuariosUrl = 'http://127.0.0.1:8000/api/usuarios';
 
   constructor(private http: HttpClient) { }
 
   getProductos(): Observable<any[]> {
-    return this.http.get<any[]>(this.baseUrl);
+    return this.http.get<any[]>(this.productosUrl);
   }
 
-  // ESTA ES LA FUNCIÓN QUE TE FALTA:
+  // MERCADO PAGO
   crearPreferencia(productoId: number): Observable<any> {
     return this.http.post<any>(this.pagoUrl, { id: productoId });
+  }
+
+  // AUTENTICACIÓN
+  registrar(data: any): Observable<any> {
+    // Asegúrate de que la URL termine en / si tu Django tiene APPEND_SLASH = True
+    return this.http.post(`${this.usuariosUrl}/registro/`, data);
+  }
+
+  login(data: any): Observable<any> {
+    return this.http.post(`${this.usuariosUrl}/login/`, data);
   }
 }
