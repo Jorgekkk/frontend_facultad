@@ -20,7 +20,7 @@ export class LoginComponent {
     this.api.login(this.credentials).subscribe({
       next: (res: any) => {
         // Guardamos el token en el almacenamiento local del navegador
-        localStorage.setItem('token', res.access); 
+        localStorage.setItem('token', res.access);
         alert('¡Bienvenido!');
         this.router.navigate(['/lista-productos']); // A donde quieras ir después
       },

@@ -12,7 +12,11 @@ import { ApiService } from '../../services/api';
   styleUrls: ['./registro.scss']
 })
 export class RegistroComponent {
+onRegistro() {
+throw new Error('Method not implemented.');
+}
   user = { username: '', email: '', password: '' };
+registroData: any;
 
   constructor(private api: ApiService, private router: Router) {}
 
