@@ -19,10 +19,17 @@ export class LoginComponent {
   onLogin() {
     this.api.login(this.credentials).subscribe({
       next: (res: any) => {
-        // Guardamos el token en el almacenamiento local del navegador
+        // Guardamos el token para las peticiones a Django
         localStorage.setItem('token', res.access);
+        
+        // GUARDAR EL ID: Importante para vincular con la tabla 'perfiles' de Supabase
+        // Asumiendo que tu backend devuelve el user_id o el objeto user
+        if (res.user_id) {
+          localStorage.setItem('user_id', res.user_id);
+        }
+      
         alert('¡Bienvenido!');
-        this.router.navigate(['/lista-productos']); // A donde quieras ir después
+        this.router.navigate(['/lista-productos']); 
       },
       error: (err) => {
         alert('Credenciales incorrectas');

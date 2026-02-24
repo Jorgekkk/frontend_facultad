@@ -1,0 +1,38 @@
+<div class="perfil-container">
+  <div class="perfil-card">
+    <div class="header">
+      <div class="icon-box">👤</div>
+      <h1>Configuración de Perfil</h1>
+      <p>Actualiza tu información pública</p>
+    </div>
+
+    <div class="avatar-section">
+      <div class="avatar-wrapper" (click)="fileInput.click()">
+        <img [src]="fotoPreview || 'assets/img/default-user.png'" alt="Foto de perfil">
+        <div class="avatar-overlay">
+          <span>Cambiar Foto</span>
+        </div>
+      </div>
+      <input #fileInput type="file" (change)="onFileSelected($event)" hidden accept="image/*">
+    </div>
+
+    <div class="form-content">
+      <div class="input-group">
+        <label>Nombre Completo</label>
+        <div class="input-wrapper">
+          <span class="input-icon">✎</span>
+          <input type="text" [(ngModel)]="nombreUsuario" placeholder="Escribe tu nombre...">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="save-button" (click)="guardarCambios()">
+          Guardar Cambios
+        </button>
+        <button class="back-button" routerLink="/lista-productos">
+          Volver a la tienda
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

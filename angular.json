@@ -22,6 +22,12 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
+            "fileReplacements": [
+              {
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.prod.ts"
+              }
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "polyfills": [
