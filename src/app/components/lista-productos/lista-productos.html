@@ -1,1 +1,22 @@
-<p>lista-productos works!</p>
+<div class="main-layout">
+  <aside class="sidebar">
+    <h3>Categorías</h3>
+    <ul class="category-list">
+      <li (click)="filtrar('TODOS')" class="active">Todos los productos</li>
+      <li (click)="filtrar('ELECTRONICOS')">Electrónicos</li>
+      <li (click)="filtrar('COMIDA')">Comida</li>
+      <li (click)="filtrar('DIVERSION')">Diversión</li>
+    </ul>
+    
+    <div class="sidebar-ad">
+      <p>Vende tus propios productos fácilmente.</p>
+      <button routerLink="/publicar" class="btn-vender">Publicar Ahora</button>
+    </div>
+  </aside>
+
+  <section class="products-content">
+    <h2>Productos de la Facultad</h2>
+    <div class="products-grid">
+       </div>
+  </section>
+</div>
