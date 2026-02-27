@@ -1,0 +1,153 @@
+.page-wrapper,
+.main-wrapper,
+main {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.main-layout {
+  display: flex;
+  flex-direction: row;           
+  align-items: flex-start;       
+  margin-top: 65px;
+  min-height: calc(100vh - 65px);
+  background-color: #f0f2f5;
+  width: 100%;
+}
+
+.sidebar {
+  width: 240px;
+  min-width: 240px;
+  max-width: 240px;
+  flex-shrink: 0;                
+  flex-grow: 0;                  
+  align-self: flex-start;       
+
+  position: sticky;
+  top: 65px;
+  height: calc(100vh - 65px);
+  overflow-y: auto;
+
+  background: #ffffff;
+  border-right: 1px solid #e2e6ea;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
+  scrollbar-width: thin;
+  scrollbar-color: #dde1e7 transparent;
+  z-index: 10;
+}
+
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb {
+  background: #dde1e7;
+  border-radius: 4px;
+}
+
+/* ── Título de sección ── */
+.sidebar h3,
+.sidebar-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a9bb0;
+  padding: 12px 10px 6px;
+  margin: 0;
+}
+
+/* ── Links de categoría ── */
+.sidebar a,
+.sidebar-link {
+  display: block;
+  padding: 9px 12px;
+  border-radius: 7px;
+  font-size: 0.88rem;
+  color: #2d3748;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease, padding-left 0.15s ease;
+  font-weight: 400;
+}
+
+.sidebar a:hover,
+.sidebar-link:hover {
+  background: #f0f4ff;
+  color: #1a56db;
+  padding-left: 16px;
+}
+
+.sidebar a.active,
+.sidebar-link.active {
+  background: #ebf0ff;
+  color: #1a56db;
+  font-weight: 600;
+}
+
+.sidebar hr,
+.sidebar-divider {
+  border: none;
+  border-top: 1px solid #edf0f4;
+  margin: 8px 0;
+}
+
+.sidebar-sell-card {
+  margin-top: auto;            
+  background: linear-gradient(135deg, #fffbf0 0%, #fff8e6 100%);
+  border: 1px solid #f0d888;
+  border-radius: 10px;
+  padding: 16px 14px;
+  text-align: center;
+}
+
+.sidebar-sell-card p {
+  font-size: 0.82rem;
+  color: #6b5c2e;
+  margin: 0 0 10px;
+  font-weight: 500;
+}
+
+.btn-vender {
+  width: 100%;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #fecd45 0%, #f5a623 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #3d2600;
+  letter-spacing: 0.01em;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(245, 166, 35, 0.4);
+}
+
+.btn-vender:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(245, 166, 35, 0.55);
+}
+
+.products-content {
+  flex: 1;
+  min-width: 0;                  
+  padding: 28px 24px;
+}
+
+.products-content h2 {
+  margin-bottom: 20px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .products-content { padding: 16px; }
+}
