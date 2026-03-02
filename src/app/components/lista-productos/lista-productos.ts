@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../../services/api';
+import { SupabaseService } from '../../services/supabase'; // Importado para Fase 4
 
 declare var MercadoPago: any;
 
@@ -10,34 +11,29 @@ declare var MercadoPago: any;
   standalone: true,
   imports: [CommonModule, RouterModule],
   styles: [`
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-   :host {
+    :host {
       display: block;
       width: 100%;
       height: 100%;
-      font-family: 'Poppins', sans-serif; 
+      font-family: 'Poppins', sans-serif;
     }
 
-    /* 3. LAYOUT PRINCIPAL */
     .main-layout {
       display: flex;
       flex-direction: row;
       align-items: flex-start;
-      width: 100%; 
-      margin-top: 65px; 
+      width: 100%;
+      margin-top: 65px;
       min-height: calc(100vh - 65px);
     }
 
-    /* SIDEBAR (Escritorio) */
+    /* SIDEBAR */
     .sidebar {
       width: 250px;
       min-width: 250px;
-      flex-shrink: 0; 
+      flex-shrink: 0;
       background: #ffffff;
       position: sticky;
       top: 65px;
@@ -50,18 +46,8 @@ declare var MercadoPago: any;
       z-index: 10;
     }
 
-    .sidebar h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: #2b2e33;
-    }
-
-    .sidebar-links {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
+    .sidebar h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; color: #2b2e33; }
+    .sidebar-links { display: flex; flex-direction: column; gap: 5px; }
 
     .sidebar-link {
       padding: 10px 15px;
@@ -71,90 +57,76 @@ declare var MercadoPago: any;
       font-size: 0.95rem;
       border-radius: 8px;
       transition: all 0.3s ease;
-      font-weight: 400;
     }
 
-    .sidebar-link:hover { 
-      background-color: rgba(85, 107, 47, 0.05); 
-      color: #556b2f;
-    }
+    .sidebar-link:hover { background-color: rgba(85, 107, 47, 0.05); color: #556b2f; }
 
     .sidebar-link.active {
-      background-color: rgba(85, 107, 47, 0.1); 
+      background-color: rgba(85, 107, 47, 0.1);
       color: #556b2f;
       font-weight: 600;
-      border-left: 4px solid #556b2f; 
+      border-left: 4px solid #556b2f;
     }
 
     .sidebar-sell-card {
       margin-top: auto;
-      background: #fcfdfa; 
-      border: 1px solid rgba(85, 107, 47, 0.2); 
+      background: #fcfdfa;
+      border: 1px solid rgba(85, 107, 47, 0.2);
       padding: 20px 15px;
       border-radius: 12px;
       text-align: center;
-      margin-bottom: 10px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.02);
     }
 
-    .btn-vender, .buy-btn {
+    .btn-vender {
       width: 100%;
       padding: 10px;
-      background-color: #556b2f; 
+      background-color: #556b2f;
       color: white;
       border: none;
-      border-radius: 10px; 
+      border-radius: 10px;
       cursor: pointer;
       font-weight: 500;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.95rem;
       transition: all 0.3s ease;
       margin-top: 10px;
     }
 
-    .btn-vender:hover, .buy-btn:hover {
-      background-color: #435726;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(85, 107, 47, 0.3);
-    }
-
-    /* CONTENIDO DE PRODUCTOS */
+    /* PRODUCTOS */
     .products-content {
       flex-grow: 1;
-      width: calc(100vw - 250px); 
+      width: calc(100vw - 250px);
       padding: 25px 30px;
-    }
-
-    .products-content h2 {
-      font-size: 1.6rem;
-      font-weight: 600;
-      margin-bottom: 25px;
-      color: #2b2e33;
     }
 
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 20px;
     }
 
     .product-card {
       background: white;
       border: 1px solid #eef0f2;
-      border-radius: 16px; 
-      padding: 20px;
+      border-radius: 16px;
+      padding: 15px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       transition: all 0.3s ease;
-      height: 100%;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-      border-color: rgba(85, 107, 47, 0.3); 
+    .product-img-container {
+      width: 100%;
+      height: 180px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      background: #f8f9fa;
+    }
+
+    .product-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .buy-btn {
@@ -162,96 +134,54 @@ declare var MercadoPago: any;
       background: #ffd814;
       border: 1px solid #fcd200;
       border-radius: 20px;
-      padding: 8px;
+      padding: 10px;
       width: 100%;
       cursor: pointer;
-      font-weight: 500;
+      font-weight: 600;
+      transition: all 0.2s;
     }
+    .buy-btn:hover { background: #f7ca00; transform: scale(1.02); }
 
-    /* =========================================
-       RESPONSIVE (Celulares < 768px)
-       ========================================= */
     @media (max-width: 768px) {
-      .main-layout {
-        flex-direction: column;
-        margin-top: 115px; 
-        min-height: calc(100vh - 115px);
-      }
-
+      .main-layout { flex-direction: column; margin-top: 65px; }
       .sidebar {
-        width: 100vw;
-        min-width: 100vw;
-        height: auto;
-        position: relative; 
-        top: 0;
-        padding: 10px 15px;
-        border-right: none;
-        border-bottom: 1px solid #ddd;
+        width: 100%; min-width: 100%; height: auto; position: relative; top: 0;
+        border-right: none; border-bottom: 1px solid #ddd;
       }
-
-      .sidebar h3 { display: none; } 
-
-      .sidebar-links {
-        flex-direction: row;
-        overflow-x: auto; 
-        padding-bottom: 5px;
-        gap: 10px;
-        scrollbar-width: none; 
-      }
-      .sidebar-links::-webkit-scrollbar { display: none; }
-
-      .sidebar-link {
-        padding: 8px 16px;
-        border: 1px solid #ddd;
-        border-radius: 20px;
-        white-space: nowrap; 
-      }
-
-      .sidebar-link.active {
-        border-left: 1px solid #007185;
-        border: 1px solid #007185; 
-      }
-
+      .sidebar h3 { display: none; }
+      .sidebar-links { flex-direction: row; overflow-x: auto; white-space: nowrap; }
       .sidebar-sell-card { display: none; }
-
-      .products-content {
-        width: 100vw;
-        padding: 15px;
-      }
-      
-      .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 15px;
-      }
+      .products-content { width: 100%; padding: 15px; }
     }
   `],
   template: `
     <div class="main-layout">
       <aside class="sidebar">
         <h3>Departamentos</h3>
-        
         <div class="sidebar-links">
-          <a class="sidebar-link" [class.active]="categoriaActiva === 'TODOS'" (click)="filtrar('TODOS')">Todos los departamentos</a>
-          <a class="sidebar-link" [class.active]="categoriaActiva === 'ELECTRONICOS'" (click)="filtrar('ELECTRONICOS')">Electrónicos</a>
-          <a class="sidebar-link" [class.active]="categoriaActiva === 'COMIDA'" (click)="filtrar('COMIDA')">Comida y Bebidas</a>
-          <a class="sidebar-link" [class.active]="categoriaActiva === 'DIVERSION'" (click)="filtrar('DIVERSION')">Juegos y Diversión</a>
+          <a class="sidebar-link" [class.active]="categoriaActiva === 'TODOS'" (click)="filtrar('TODOS')">Todos</a>
+          <a class="sidebar-link" [class.active]="categoriaActiva === 'ELECTRÓNICOS'" (click)="filtrar('ELECTRÓNICOS')">Electrónicos</a>
+          <a class="sidebar-link" [class.active]="categoriaActiva === 'COMIDA'" (click)="filtrar('COMIDA')">Comida</a>
+          <a class="sidebar-link" [class.active]="categoriaActiva === 'DIVERSIÓN'" (click)="filtrar('DIVERSIÓN')">Diversión</a>
         </div>
 
         <div class="sidebar-sell-card">
-          <small style="display: block; margin-bottom: 5px; font-weight: bold; color: #111;">¿Tienes algo que vender?</small>
-          <button routerLink="/publicar" class="btn-vender">Publicar en VEN FCC</button>
+          <small>¿Tienes algo que vender?</small>
+          <button routerLink="/publicar" class="btn-vender">Publicar Ahora</button>
         </div>
       </aside>
 
       <section class="products-content">
         <h2>Resultados para ti</h2>
-        
         <div class="products-grid">
           <div *ngFor="let p of productosFiltrados" class="product-card">
-            <div>
-              <h3 style="font-size: 1rem; margin-bottom: 8px; color: #;">{{ p.nombre }}</h3>
-              <div style="font-size: 1.3rem; font-weight: bold; color: #b12704; margin-bottom: 8px;">{{ p.precio | currency }}</div>
-              <small style="color: #565959; display: block; margin-bottom: 5px;">Vendido por: {{ p.vendedor_nombre }}</small>
+            <div class="product-img-container">
+              <img [src]="p.imagen_url || 'assets/img/placeholder.png'" [alt]="p.titulo">
+            </div>
+            <div style="flex-grow: 1;">
+              <h3 style="font-size: 1rem; margin-bottom: 5px; color: #111;">{{ p.titulo }}</h3>
+              <div style="font-size: 1.2rem; font-weight: bold; color: #b12704;">{{ p.precio | currency }}</div>
+              <small style="color: #565959;">Departamento: {{ p.categoria }}</small>
             </div>
             <button class="buy-btn" (click)="comprar(p)">Comprar ahora</button>
           </div>
@@ -266,16 +196,22 @@ export class ListaProductosComponent implements OnInit {
   categoriaActiva: string = 'TODOS';
   private publicKey = 'APP_USR-03f348b7-b561-4164-8cff-0133a870aa06';
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private supabase: SupabaseService // Inyectado para Fase 4
+  ) {}
 
-  ngOnInit(): void {
-    this.api.getProductos().subscribe({
-      next: (data: any[]) => {
-        this.productos = data;
-        this.productosFiltrados = data;
-      },
-      error: (err) => console.error(err)
-    });
+  async ngOnInit() {
+    await this.cargarProductos();
+  }
+
+  async cargarProductos() {
+    // Fase 4: Cargamos directamente desde Supabase para ver los publicados
+    const { data, error } = await this.supabase.obtenerProductos();
+    if (data) {
+      this.productos = data;
+      this.productosFiltrados = data;
+    }
   }
 
   filtrar(categoria: string) {
@@ -283,20 +219,33 @@ export class ListaProductosComponent implements OnInit {
     if (categoria === 'TODOS') {
       this.productosFiltrados = this.productos;
     } else {
-      this.productosFiltrados = this.productos.filter(p => p.categoria.toUpperCase() === categoria);
+      // Ajuste de mayúsculas para que coincida con lo publicado
+      this.productosFiltrados = this.productos.filter(p =>
+        p.categoria.toUpperCase() === categoria.toUpperCase()
+      );
     }
   }
 
   comprar(producto: any) {
-    console.log('Comprando', producto);
-    this.api.crearPreferencia(producto.id).subscribe({
-      next: (res) => {
-        if (res.id) {
-          const mp = new MercadoPago(this.publicKey, { locale: 'es-MX' });
-          mp.checkout({ preference: { id: res.id }, autoOpen: true });
-        }
-      },
-      error: (err) => alert('Error al iniciar pago')
-    });
+  console.log('🛒 Producto enviado al backend:', producto);
+
+  // Verificamos que existan los datos antes de enviar
+  if (!producto.titulo || !producto.precio) {
+    alert('Error: El producto no tiene título o precio válido.');
+    return;
   }
+
+  this.api.crearPreferencia(producto).subscribe({
+    next: (res) => {
+      if (res.id) {
+        const mp = new MercadoPago(this.publicKey, { locale: 'es-MX' });
+        mp.checkout({ preference: { id: res.id }, autoOpen: true });
+      }
+    },
+    error: (err) => {
+      console.error('❌ Error en el backend:', err);
+      alert('Error al procesar el pago. Revisa la consola del servidor.');
+    }
+  });
+}
 }

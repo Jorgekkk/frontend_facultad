@@ -41,4 +41,36 @@ export class SupabaseService {
       .from('perfiles')
       .upsert({ id: userId, ...updates });
   }
+
+  // 1. Sube la foto del producto al bucket
+  async subirFotoProducto(file: File) {
+    const filePath = `productos/${Date.now()}-${file.name}`;
+    const { error } = await this.supabase.storage
+      .from('imagenes-productos')
+      .upload(filePath, file);
+
+    if (error) throw error;
+
+    // Obtiene el link público
+    const { data } = this.supabase.storage.from('imagenes-productos').getPublicUrl(filePath);
+    return data.publicUrl;
+  }
+
+  // 2. Guarda el producto en la tabla 'productos'
+  async crearProducto(producto: any) {
+    const { data, error } = await this.supabase
+      .from('productos')
+      .insert([producto]); // Supabase pide que sea un array
+
+    if (error) throw error;
+    return data;
+  }
+
+  async obtenerProductos() {
+  const { data, error } = await this.supabase
+    .from('productos')
+    .select('*')
+    .order('id', { ascending: false }); // Para que lo más nuevo salga primero
+  return { data, error };
+}
 }

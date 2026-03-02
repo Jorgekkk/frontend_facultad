@@ -1,0 +1,54 @@
+<div class="seller-container">
+  <div class="seller-card">
+    <div class="header">
+      <h2>Vender un artículo</h2>
+      <p>Añade los detalles de tu producto para que aparezca en la tienda.</p>
+    </div>
+
+    <div class="form-grid">
+      <div class="photo-section">
+        <label>Foto del producto</label>
+        <div class="photo-upload-box" (click)="fileInput.click()">
+          <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Preview">
+          <div *ngIf="!fotoPreview" class="placeholder">
+            <span>📸 Subir imagen</span>
+          </div>
+          <input #fileInput type="file" (change)="onFileSelected($event)" hidden accept="image/*">
+        </div>
+      </div>
+
+      <div class="details-section">
+        <div class="input-group">
+          <label>Título del producto *</label>
+          <input type="text" [(ngModel)]="producto.titulo" placeholder="Ej. Computadora Dell Inspiron">
+        </div>
+
+        <div class="input-group">
+          <label>Precio ($) *</label>
+          <input type="number" [(ngModel)]="producto.precio" placeholder="Ej. 12000">
+        </div>
+
+        <div class="input-group">
+          <label>Categoría (Departamento) *</label>
+          <select [(ngModel)]="producto.categoria">
+            <option value="Electrónicos">Electrónicos</option>
+            <option value="Comida">Comida y Bebidas</option>
+            <option value="Diversión">Juegos y Diversión</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>Descripción</label>
+          <textarea [(ngModel)]="producto.descripcion" rows="3" placeholder="Describe los detalles..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-cancelar" routerLink="/lista-productos">Cancelar</button>
+      <button class="btn-publicar" (click)="publicar()" [disabled]="cargando">
+        {{ cargando ? 'Publicando...' : 'Publicar Ahora' }}
+      </button>
+    </div>
+  </div>
+</div>
