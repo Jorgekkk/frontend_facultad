@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router'; // <-- Agregado ActivatedRoute
 import { ApiService } from '../../services/api';
 
 declare var MercadoPago: any;
@@ -9,6 +9,7 @@ declare var MercadoPago: any;
   selector: 'app-lista-productos',
   standalone: true,
   imports: [CommonModule, RouterModule],
+  // Eliminé templateUrl porque ya estás usando template inline abajo
   styles: [`
     * {
       box-sizing: border-box;
@@ -166,6 +167,7 @@ declare var MercadoPago: any;
       width: 100%;
       cursor: pointer;
       font-weight: 500;
+      color: #111;
     }
 
     /* =========================================
@@ -244,12 +246,16 @@ declare var MercadoPago: any;
       </aside>
 
       <section class="products-content">
-        <h2>Resultados para ti</h2>
+        <h2>{{ terminoBusqueda ? 'Resultados de búsqueda: "' + terminoBusqueda + '"' : 'Resultados para ti' }}</h2>
         
         <div class="products-grid">
+          <div *ngIf="productosFiltrados.length === 0" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #555;">
+            No se encontraron productos que coincidan con tu búsqueda.
+          </div>
+
           <div *ngFor="let p of productosFiltrados" class="product-card">
             <div>
-              <h3 style="font-size: 1rem; margin-bottom: 8px; color: #;">{{ p.nombre }}</h3>
+              <h3 style="font-size: 1rem; margin-bottom: 8px; color: #2b2e33;">{{ p.nombre }}</h3>
               <div style="font-size: 1.3rem; font-weight: bold; color: #b12704; margin-bottom: 8px;">{{ p.precio | currency }}</div>
               <small style="color: #565959; display: block; margin-bottom: 5px;">Vendido por: {{ p.vendedor_nombre }}</small>
             </div>
@@ -264,15 +270,22 @@ export class ListaProductosComponent implements OnInit {
   productos: any[] = [];
   productosFiltrados: any[] = [];
   categoriaActiva: string = 'TODOS';
+  terminoBusqueda: string = ''; // <-- Nueva variable para el buscador
   private publicKey = 'APP_USR-03f348b7-b561-4164-8cff-0133a870aa06';
 
-  constructor(private api: ApiService) {}
+  // Inyectamos ActivatedRoute para leer la URL
+  constructor(private api: ApiService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.api.getProductos().subscribe({
       next: (data: any[]) => {
         this.productos = data;
-        this.productosFiltrados = data;
+        
+        // Atrapamos el término de búsqueda de la URL (ej. ?q=hamburguesa)
+        this.route.queryParams.subscribe(params => {
+          this.terminoBusqueda = params['q'] || '';
+          this.aplicarFiltros(); // Ejecutamos la función maestra
+        });
       },
       error: (err) => console.error(err)
     });
@@ -280,11 +293,37 @@ export class ListaProductosComponent implements OnInit {
 
   filtrar(categoria: string) {
     this.categoriaActiva = categoria;
-    if (categoria === 'TODOS') {
-      this.productosFiltrados = this.productos;
-    } else {
-      this.productosFiltrados = this.productos.filter(p => p.categoria.toUpperCase() === categoria);
+    this.aplicarFiltros(); // Ahora pasa por la función maestra
+  }
+
+  // Lógica principal: Filtra por categoría y luego por palabra clave
+  aplicarFiltros() {
+    let resultados = this.productos;
+
+    // 1. Filtro por Categoría
+    if (this.categoriaActiva !== 'TODOS') {
+      // Usamos el limpiador de acentos que hicimos antes
+      const catBuscada = this.categoriaActiva.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+      
+      resultados = resultados.filter(p => {
+        if (!p.categoria) return false;
+        const catProducto = p.categoria.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+        return catProducto === catBuscada;
+      });
     }
+
+    // 2. Filtro por Buscador
+    if (this.terminoBusqueda) {
+      const busqueda = this.terminoBusqueda.toLowerCase().trim();
+      
+      resultados = resultados.filter(p => 
+        // Busca coincidencias en el nombre del producto o el nombre del vendedor
+        (p.nombre && p.nombre.toLowerCase().includes(busqueda)) || 
+        (p.vendedor_nombre && p.vendedor_nombre.toLowerCase().includes(busqueda))
+      );
+    }
+
+    this.productosFiltrados = resultados;
   }
 
   comprar(producto: any) {
