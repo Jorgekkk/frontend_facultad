@@ -17,9 +17,10 @@ export class ApiService {
   }
 
   // MERCADO PAGO
-  crearPreferencia(productoId: number): Observable<any> {
-    return this.http.post<any>(this.pagoUrl, { id: productoId });
-  }
+  crearPreferencia(producto: any) {
+  // Enviamos el objeto producto completo que contiene titulo y precio
+  return this.http.post<any>(`${this.pagoUrl}`, producto);
+}
 
   // AUTENTICACIÓN
   registrar(data: any): Observable<any> {

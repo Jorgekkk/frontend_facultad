@@ -19,17 +19,21 @@ export class LoginComponent {
   onLogin() {
     this.api.login(this.credentials).subscribe({
       next: (res: any) => {
-        // Guardamos el token para las peticiones a Django
+        // 1. Guardamos el token
         localStorage.setItem('token', res.access);
-        
-        // GUARDAR EL ID: Importante para vincular con la tabla 'perfiles' de Supabase
-        // Asumiendo que tu backend devuelve el user_id o el objeto user
-        if (res.user_id) {
-          localStorage.setItem('user_id', res.user_id);
+
+        // 2. MAGIA: Extraemos el ID del usuario oculto dentro del token JWT
+        try {
+          const payload = JSON.parse(atob(res.access.split('.')[1]));
+          // En Django SimpleJWT, el id suele venir como 'user_id'
+          localStorage.setItem('user_id', payload.user_id);
+          console.log('ID de usuario guardado:', payload.user_id);
+        } catch(e) {
+          console.error('No se pudo decodificar el token', e);
         }
-      
+
         alert('¡Bienvenido!');
-        this.router.navigate(['/lista-productos']); 
+        this.router.navigate(['/lista-productos']);
       },
       error: (err) => {
         alert('Credenciales incorrectas');

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router'; // <-- Agregado ActivatedRoute
+import { RouterModule, ActivatedRoute } from '@angular/router'; 
 import { ApiService } from '../../services/api';
+import { SupabaseService } from '../../services/supabase';
 
 declare var MercadoPago: any;
 
@@ -9,36 +10,30 @@ declare var MercadoPago: any;
   selector: 'app-lista-productos',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  // Eliminé templateUrl porque ya estás usando template inline abajo
   styles: [`
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-   :host {
+    :host {
       display: block;
       width: 100%;
       height: 100%;
-      font-family: 'Poppins', sans-serif; 
+      font-family: 'Poppins', sans-serif;
     }
 
-    /* 3. LAYOUT PRINCIPAL */
     .main-layout {
       display: flex;
       flex-direction: row;
       align-items: flex-start;
-      width: 100%; 
-      margin-top: 65px; 
+      width: 100%;
+      margin-top: 65px;
       min-height: calc(100vh - 65px);
     }
 
-    /* SIDEBAR (Escritorio) */
+    /* SIDEBAR */
     .sidebar {
       width: 250px;
       min-width: 250px;
-      flex-shrink: 0; 
+      flex-shrink: 0;
       background: #ffffff;
       position: sticky;
       top: 65px;
@@ -51,18 +46,8 @@ declare var MercadoPago: any;
       z-index: 10;
     }
 
-    .sidebar h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: #2b2e33;
-    }
-
-    .sidebar-links {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
+    .sidebar h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; color: #2b2e33; }
+    .sidebar-links { display: flex; flex-direction: column; gap: 5px; }
 
     .sidebar-link {
       padding: 10px 15px;
@@ -72,57 +57,44 @@ declare var MercadoPago: any;
       font-size: 0.95rem;
       border-radius: 8px;
       transition: all 0.3s ease;
-      font-weight: 400;
     }
 
-    .sidebar-link:hover { 
-      background-color: rgba(85, 107, 47, 0.05); 
-      color: #556b2f;
-    }
+    .sidebar-link:hover { background-color: rgba(85, 107, 47, 0.05); color: #556b2f; }
 
     .sidebar-link.active {
-      background-color: rgba(85, 107, 47, 0.1); 
+      background-color: rgba(85, 107, 47, 0.1);
       color: #556b2f;
       font-weight: 600;
-      border-left: 4px solid #556b2f; 
+      border-left: 4px solid #556b2f;
     }
 
     .sidebar-sell-card {
       margin-top: auto;
-      background: #fcfdfa; 
-      border: 1px solid rgba(85, 107, 47, 0.2); 
+      background: #fcfdfa;
+      border: 1px solid rgba(85, 107, 47, 0.2);
       padding: 20px 15px;
       border-radius: 12px;
       text-align: center;
-      margin-bottom: 10px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.02);
     }
 
-    .btn-vender, .buy-btn {
+    .btn-vender {
       width: 100%;
       padding: 10px;
-      background-color: #556b2f; 
+      background-color: #556b2f;
       color: white;
       border: none;
-      border-radius: 10px; 
+      border-radius: 10px;
       cursor: pointer;
       font-weight: 500;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.95rem;
       transition: all 0.3s ease;
       margin-top: 10px;
     }
 
-    .btn-vender:hover, .buy-btn:hover {
-      background-color: #435726;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(85, 107, 47, 0.3);
-    }
-
-    /* CONTENIDO DE PRODUCTOS */
+    /* PRODUCTOS */
     .products-content {
       flex-grow: 1;
-      width: calc(100vw - 250px); 
+      width: calc(100vw - 250px);
       padding: 25px 30px;
     }
 
@@ -135,113 +107,76 @@ declare var MercadoPago: any;
 
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 20px;
     }
 
     .product-card {
       background: white;
       border: 1px solid #eef0f2;
-      border-radius: 16px; 
-      padding: 20px;
+      border-radius: 16px;
+      padding: 15px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       transition: all 0.3s ease;
       height: 100%;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-      border-color: rgba(85, 107, 47, 0.3); 
+    .product-img-container {
+      width: 100%;
+      height: 180px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      background: #f8f9fa;
+    }
+
+    .product-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .buy-btn {
-      margin-top: 15px;
+      margin-top: auto; /* Empuja el botón al fondo si las tarjetas tienen distinto tamaño */
       background: #ffd814;
       border: 1px solid #fcd200;
       border-radius: 20px;
-      padding: 8px;
+      padding: 10px;
       width: 100%;
       cursor: pointer;
-      font-weight: 500;
+      font-weight: 600;
       color: #111;
+      transition: all 0.2s;
     }
+    .buy-btn:hover { background: #f7ca00; transform: scale(1.02); }
 
-    /* =========================================
-       RESPONSIVE (Celulares < 768px)
-       ========================================= */
     @media (max-width: 768px) {
-      .main-layout {
-        flex-direction: column;
-        margin-top: 115px; 
-        min-height: calc(100vh - 115px);
-      }
-
+      .main-layout { flex-direction: column; margin-top: 65px; }
       .sidebar {
-        width: 100vw;
-        min-width: 100vw;
-        height: auto;
-        position: relative; 
-        top: 0;
-        padding: 10px 15px;
-        border-right: none;
-        border-bottom: 1px solid #ddd;
+        width: 100%; min-width: 100%; height: auto; position: relative; top: 0;
+        border-right: none; border-bottom: 1px solid #ddd;
       }
-
-      .sidebar h3 { display: none; } 
-
-      .sidebar-links {
-        flex-direction: row;
-        overflow-x: auto; 
-        padding-bottom: 5px;
-        gap: 10px;
-        scrollbar-width: none; 
-      }
-      .sidebar-links::-webkit-scrollbar { display: none; }
-
-      .sidebar-link {
-        padding: 8px 16px;
-        border: 1px solid #ddd;
-        border-radius: 20px;
-        white-space: nowrap; 
-      }
-
-      .sidebar-link.active {
-        border-left: 1px solid #007185;
-        border: 1px solid #007185; 
-      }
-
+      .sidebar h3 { display: none; }
+      .sidebar-links { flex-direction: row; overflow-x: auto; white-space: nowrap; }
       .sidebar-sell-card { display: none; }
-
-      .products-content {
-        width: 100vw;
-        padding: 15px;
-      }
-      
-      .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 15px;
-      }
+      .products-content { width: 100%; padding: 15px; }
     }
   `],
   template: `
     <div class="main-layout">
       <aside class="sidebar">
         <h3>Departamentos</h3>
-        
         <div class="sidebar-links">
-          <a class="sidebar-link" [class.active]="categoriaActiva === 'TODOS'" (click)="filtrar('TODOS')">Todos los departamentos</a>
-          <a class="sidebar-link" [class.active]="categoriaActiva === 'ELECTRONICOS'" (click)="filtrar('ELECTRONICOS')">Electrónicos</a>
-          <a class="sidebar-link" [class.active]="categoriaActiva === 'COMIDA'" (click)="filtrar('COMIDA')">Comida y Bebidas</a>
-          <a class="sidebar-link" [class.active]="categoriaActiva === 'DIVERSION'" (click)="filtrar('DIVERSION')">Juegos y Diversión</a>
+          <a class="sidebar-link" [class.active]="categoriaActiva === 'TODOS'" (click)="filtrar('TODOS')">Todos</a>
+          <a class="sidebar-link" [class.active]="categoriaActiva === 'ELECTRÓNICOS'" (click)="filtrar('ELECTRÓNICOS')">Electrónicos</a>
+          <a class="sidebar-link" [class.active]="categoriaActiva === 'COMIDA'" (click)="filtrar('COMIDA')">Comida</a>
+          <a class="sidebar-link" [class.active]="categoriaActiva === 'DIVERSIÓN'" (click)="filtrar('DIVERSIÓN')">Diversión</a>
         </div>
 
         <div class="sidebar-sell-card">
-          <small style="display: block; margin-bottom: 5px; font-weight: bold; color: #111;">¿Tienes algo que vender?</small>
-          <button routerLink="/publicar" class="btn-vender">Publicar en VEN FCC</button>
+          <small>¿Tienes algo que vender?</small>
+          <button routerLink="/publicar" class="btn-vender">Publicar Ahora</button>
         </div>
       </aside>
 
@@ -254,10 +189,14 @@ declare var MercadoPago: any;
           </div>
 
           <div *ngFor="let p of productosFiltrados" class="product-card">
-            <div>
-              <h3 style="font-size: 1rem; margin-bottom: 8px; color: #2b2e33;">{{ p.nombre }}</h3>
-              <div style="font-size: 1.3rem; font-weight: bold; color: #b12704; margin-bottom: 8px;">{{ p.precio | currency }}</div>
-              <small style="color: #565959; display: block; margin-bottom: 5px;">Vendido por: {{ p.vendedor_nombre }}</small>
+            <div class="product-img-container">
+              <img [src]="p.imagen_url || 'assets/img/placeholder.png'" [alt]="p.titulo">
+            </div>
+            <div style="flex-grow: 1; display: flex; flex-direction: column; margin-bottom: 15px;">
+              <h3 style="font-size: 1rem; margin-bottom: 5px; color: #111;">{{ p.titulo }}</h3>
+              <div style="font-size: 1.2rem; font-weight: bold; color: #b12704; margin-bottom: 5px;">{{ p.precio | currency }}</div>
+              <small style="color: #565959;">Departamento: {{ p.categoria }}</small>
+              <small *ngIf="p.vendedor_nombre" style="color: #565959;">Vendido por: {{ p.vendedor_nombre }}</small>
             </div>
             <button class="buy-btn" (click)="comprar(p)">Comprar ahora</button>
           </div>
@@ -270,39 +209,37 @@ export class ListaProductosComponent implements OnInit {
   productos: any[] = [];
   productosFiltrados: any[] = [];
   categoriaActiva: string = 'TODOS';
-  terminoBusqueda: string = ''; // <-- Nueva variable para el buscador
+  terminoBusqueda: string = ''; 
   private publicKey = 'APP_USR-03f348b7-b561-4164-8cff-0133a870aa06';
 
-  // Inyectamos ActivatedRoute para leer la URL
-  constructor(private api: ApiService, private route: ActivatedRoute) {}
+  constructor(
+    private api: ApiService,
+    private route: ActivatedRoute, 
+    private supabase: SupabaseService 
+  ) {}
 
-  ngOnInit(): void {
-    this.api.getProductos().subscribe({
-      next: (data: any[]) => {
-        this.productos = data;
-        
-        // Atrapamos el término de búsqueda de la URL (ej. ?q=hamburguesa)
-        this.route.queryParams.subscribe(params => {
-          this.terminoBusqueda = params['q'] || '';
-          this.aplicarFiltros(); // Ejecutamos la función maestra
-        });
-      },
-      error: (err) => console.error(err)
-    });
+  async ngOnInit() {
+    const { data, error } = await this.supabase.obtenerProductos();
+    if (data) {
+      this.productos = data;
+      
+      this.route.queryParams.subscribe(params => {
+        this.terminoBusqueda = params['q'] || '';
+        this.aplicarFiltros(); 
+      });
+    }
   }
 
   filtrar(categoria: string) {
     this.categoriaActiva = categoria;
-    this.aplicarFiltros(); // Ahora pasa por la función maestra
+    this.aplicarFiltros(); 
   }
 
-  // Lógica principal: Filtra por categoría y luego por palabra clave
   aplicarFiltros() {
     let resultados = this.productos;
 
     // 1. Filtro por Categoría
     if (this.categoriaActiva !== 'TODOS') {
-      // Usamos el limpiador de acentos que hicimos antes
       const catBuscada = this.categoriaActiva.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
       
       resultados = resultados.filter(p => {
@@ -312,13 +249,11 @@ export class ListaProductosComponent implements OnInit {
       });
     }
 
-    // 2. Filtro por Buscador
     if (this.terminoBusqueda) {
       const busqueda = this.terminoBusqueda.toLowerCase().trim();
       
       resultados = resultados.filter(p => 
-        // Busca coincidencias en el nombre del producto o el nombre del vendedor
-        (p.nombre && p.nombre.toLowerCase().includes(busqueda)) || 
+        (p.titulo && p.titulo.toLowerCase().includes(busqueda)) || 
         (p.vendedor_nombre && p.vendedor_nombre.toLowerCase().includes(busqueda))
       );
     }
@@ -327,15 +262,24 @@ export class ListaProductosComponent implements OnInit {
   }
 
   comprar(producto: any) {
-    console.log('Comprando', producto);
-    this.api.crearPreferencia(producto.id).subscribe({
+    console.log('🛒 Producto enviado al backend:', producto);
+
+    if (!producto.titulo || !producto.precio) {
+      alert('Error: El producto no tiene título o precio válido.');
+      return;
+    }
+
+    this.api.crearPreferencia(producto).subscribe({
       next: (res) => {
         if (res.id) {
           const mp = new MercadoPago(this.publicKey, { locale: 'es-MX' });
           mp.checkout({ preference: { id: res.id }, autoOpen: true });
         }
       },
-      error: (err) => alert('Error al iniciar pago')
+      error: (err) => {
+        console.error('❌ Error en el backend:', err);
+        alert('Error al procesar el pago. Revisa la consola del servidor.');
+      }
     });
   }
 }
