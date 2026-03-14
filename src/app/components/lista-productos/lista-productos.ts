@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router'; 
 import { ApiService } from '../../services/api';
-import { SupabaseService } from '../../services/supabase'; // Importado para Fase 4
+import { SupabaseService } from '../../services/supabase';
 
 declare var MercadoPago: any;
 
@@ -98,6 +98,13 @@ declare var MercadoPago: any;
       padding: 25px 30px;
     }
 
+    .products-content h2 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      color: #2b2e33;
+    }
+
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -112,6 +119,7 @@ declare var MercadoPago: any;
       display: flex;
       flex-direction: column;
       transition: all 0.3s ease;
+      height: 100%;
     }
 
     .product-img-container {
@@ -130,7 +138,7 @@ declare var MercadoPago: any;
     }
 
     .buy-btn {
-      margin-top: 15px;
+      margin-top: auto; /* Empuja el botón al fondo si las tarjetas tienen distinto tamaño */
       background: #ffd814;
       border: 1px solid #fcd200;
       border-radius: 20px;
@@ -138,6 +146,7 @@ declare var MercadoPago: any;
       width: 100%;
       cursor: pointer;
       font-weight: 600;
+      color: #111;
       transition: all 0.2s;
     }
     .buy-btn:hover { background: #f7ca00; transform: scale(1.02); }
@@ -172,16 +181,22 @@ declare var MercadoPago: any;
       </aside>
 
       <section class="products-content">
-        <h2>Resultados para ti</h2>
+        <h2>{{ terminoBusqueda ? 'Resultados de búsqueda: "' + terminoBusqueda + '"' : 'Resultados para ti' }}</h2>
+        
         <div class="products-grid">
+          <div *ngIf="productosFiltrados.length === 0" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #555;">
+            No se encontraron productos que coincidan con tu búsqueda.
+          </div>
+
           <div *ngFor="let p of productosFiltrados" class="product-card">
             <div class="product-img-container">
               <img [src]="p.imagen_url || 'assets/img/placeholder.png'" [alt]="p.titulo">
             </div>
-            <div style="flex-grow: 1;">
+            <div style="flex-grow: 1; display: flex; flex-direction: column; margin-bottom: 15px;">
               <h3 style="font-size: 1rem; margin-bottom: 5px; color: #111;">{{ p.titulo }}</h3>
-              <div style="font-size: 1.2rem; font-weight: bold; color: #b12704;">{{ p.precio | currency }}</div>
+              <div style="font-size: 1.2rem; font-weight: bold; color: #b12704; margin-bottom: 5px;">{{ p.precio | currency }}</div>
               <small style="color: #565959;">Departamento: {{ p.categoria }}</small>
+              <small *ngIf="p.vendedor_nombre" style="color: #565959;">Vendido por: {{ p.vendedor_nombre }}</small>
             </div>
             <button class="buy-btn" (click)="comprar(p)">Comprar ahora</button>
           </div>
@@ -194,58 +209,77 @@ export class ListaProductosComponent implements OnInit {
   productos: any[] = [];
   productosFiltrados: any[] = [];
   categoriaActiva: string = 'TODOS';
+  terminoBusqueda: string = ''; 
   private publicKey = 'APP_USR-03f348b7-b561-4164-8cff-0133a870aa06';
 
   constructor(
     private api: ApiService,
-    private supabase: SupabaseService // Inyectado para Fase 4
+    private route: ActivatedRoute, 
+    private supabase: SupabaseService 
   ) {}
 
   async ngOnInit() {
-    await this.cargarProductos();
-  }
-
-  async cargarProductos() {
-    // Fase 4: Cargamos directamente desde Supabase para ver los publicados
     const { data, error } = await this.supabase.obtenerProductos();
     if (data) {
       this.productos = data;
-      this.productosFiltrados = data;
+      
+      this.route.queryParams.subscribe(params => {
+        this.terminoBusqueda = params['q'] || '';
+        this.aplicarFiltros(); 
+      });
     }
   }
 
   filtrar(categoria: string) {
     this.categoriaActiva = categoria;
-    if (categoria === 'TODOS') {
-      this.productosFiltrados = this.productos;
-    } else {
-      // Ajuste de mayúsculas para que coincida con lo publicado
-      this.productosFiltrados = this.productos.filter(p =>
-        p.categoria.toUpperCase() === categoria.toUpperCase()
+    this.aplicarFiltros(); 
+  }
+
+  aplicarFiltros() {
+    let resultados = this.productos;
+
+    // 1. Filtro por Categoría
+    if (this.categoriaActiva !== 'TODOS') {
+      const catBuscada = this.categoriaActiva.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+      
+      resultados = resultados.filter(p => {
+        if (!p.categoria) return false;
+        const catProducto = p.categoria.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+        return catProducto === catBuscada;
+      });
+    }
+
+    if (this.terminoBusqueda) {
+      const busqueda = this.terminoBusqueda.toLowerCase().trim();
+      
+      resultados = resultados.filter(p => 
+        (p.titulo && p.titulo.toLowerCase().includes(busqueda)) || 
+        (p.vendedor_nombre && p.vendedor_nombre.toLowerCase().includes(busqueda))
       );
     }
+
+    this.productosFiltrados = resultados;
   }
 
   comprar(producto: any) {
-  console.log('🛒 Producto enviado al backend:', producto);
+    console.log('🛒 Producto enviado al backend:', producto);
 
-  // Verificamos que existan los datos antes de enviar
-  if (!producto.titulo || !producto.precio) {
-    alert('Error: El producto no tiene título o precio válido.');
-    return;
-  }
-
-  this.api.crearPreferencia(producto).subscribe({
-    next: (res) => {
-      if (res.id) {
-        const mp = new MercadoPago(this.publicKey, { locale: 'es-MX' });
-        mp.checkout({ preference: { id: res.id }, autoOpen: true });
-      }
-    },
-    error: (err) => {
-      console.error('❌ Error en el backend:', err);
-      alert('Error al procesar el pago. Revisa la consola del servidor.');
+    if (!producto.titulo || !producto.precio) {
+      alert('Error: El producto no tiene título o precio válido.');
+      return;
     }
-  });
-}
+
+    this.api.crearPreferencia(producto).subscribe({
+      next: (res) => {
+        if (res.id) {
+          const mp = new MercadoPago(this.publicKey, { locale: 'es-MX' });
+          mp.checkout({ preference: { id: res.id }, autoOpen: true });
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error en el backend:', err);
+        alert('Error al procesar el pago. Revisa la consola del servidor.');
+      }
+    });
+  }
 }

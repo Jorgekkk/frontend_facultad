@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase';
 
 @Component({
@@ -14,7 +14,7 @@ export class NavbarComponent implements OnInit {
   nombreUsuario: string = '';
   avatarUrl: string | null = null;
 
-  constructor(private supabase: SupabaseService) {}
+  constructor(private supabase: SupabaseService, private router: Router) {}
 
   async ngOnInit() {
     const userId = localStorage.getItem('user_id');
@@ -25,6 +25,17 @@ export class NavbarComponent implements OnInit {
         this.nombreUsuario = data.nombre_completo;
         this.avatarUrl = data.avatar_url;
       }
+    }
+  }
+
+  buscar(termino: string) {
+    if (termino.trim()) {
+      this.router.navigate(['/lista-productos'], { 
+        queryParams: { q: termino.trim() },
+        replaceUrl: true 
+      });
+    } else {
+       this.router.navigate(['/lista-productos'], { replaceUrl: true });
     }
   }
 }

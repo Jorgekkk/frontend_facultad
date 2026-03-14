@@ -5,8 +5,9 @@
 
   <div class="nav-fill">
     <div class="search-bar">
-      <input type="text" placeholder="Buscar productos, electrónicos y más...">
-      <button class="search-btn">🔍</button>
+      <input type="text" #searchInput (input)="buscar(searchInput.value)" placeholder="Buscar productos en la FCC...">
+      
+      <button class="search-btn" (click)="buscar(searchInput.value)">🔍</button>
     </div>
   </div>
 
