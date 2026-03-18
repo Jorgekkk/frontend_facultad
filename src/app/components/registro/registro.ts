@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ApiService } from '../../services/api';
+// Importamos Supabase en lugar de ApiService
+import { SupabaseService } from '../../services/supabase';
 
 @Component({
   selector: 'app-registro',
@@ -12,24 +13,30 @@ import { ApiService } from '../../services/api';
   styleUrls: ['./registro.scss']
 })
 export class RegistroComponent {
-onRegistro() {
-throw new Error('Method not implemented.');
-}
-  user = { username: '', email: '', password: '' };
-registroData: any;
+  // Esta es la variable que usaremos en el HTML
+  registroData = { username: '', email: '', password: '' };
 
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(private supabase: SupabaseService, private router: Router) {}
 
-  onRegister() {
-    this.api.registrar(this.user).subscribe({
-      next: (res) => {
-        alert('¡Usuario creado con éxito!');
-        this.router.navigate(['/login']); // Te manda al login tras registrarte
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Error al registrar: ' + JSON.stringify(err.error));
+  // Esta es la función que se llama al darle click al botón
+  async onRegistro() {
+    try {
+      // Usamos el servicio de Supabase para crear la cuenta
+      const { data, error } = await this.supabase.crearCuenta(
+        this.registroData.email,
+        this.registroData.password,
+        this.registroData.username
+      );
+
+      if (error) {
+        alert('Error al registrar: ' + (error as any).message);
+      } else {
+        alert('¡Cuenta creada con éxito!');
+        this.router.navigate(['/login']);
       }
-    });
+    } catch (err) {
+      console.error('Error inesperado:', err);
+      alert('Ocurrió un error al intentar registrarte.');
+    }
   }
 }

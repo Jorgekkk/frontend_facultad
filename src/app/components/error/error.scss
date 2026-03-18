@@ -1,0 +1,59 @@
+.result-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 65px); /* Calcula la altura restando el navbar */
+  background-color: #f0f2f5; /* Mismo fondo grisáceo de tu tienda */
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  max-width: 450px;
+  width: 100%;
+  border-top: 5px solid #b12704; /* Una línea roja arriba para resaltar el error */
+}
+
+.icon {
+  font-size: 60px;
+  margin-bottom: 15px;
+}
+
+h1 {
+  color: #b12704; /* Rojo estilo Amazon para errores */
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+p {
+  color: #565959;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 25px;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #ffd814; /* Tu clásico botón amarillo */
+  color: #0f1111;
+  border: 1px solid #fcd200;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: #f7ca00;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}

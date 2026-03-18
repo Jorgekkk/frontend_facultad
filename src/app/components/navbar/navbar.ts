@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { SupabaseService } from '../../services/supabase';
+import { CarritoService } from '../../services/carrito';
 
 @Component({
   selector: 'app-navbar',
@@ -14,7 +15,14 @@ export class NavbarComponent implements OnInit {
   nombreUsuario: string = '';
   avatarUrl: string | null = null;
 
-  constructor(private supabase: SupabaseService, private router: Router) {}
+  // 2. Creamos la variable que guardará el número del carrito
+  cantidadCarrito: number = 0;
+
+  constructor(
+    private supabase: SupabaseService,
+    private router: Router,
+    private carritoService: CarritoService // 3. Inyectamos el servicio
+  ) {}
 
   async ngOnInit() {
     const userId = localStorage.getItem('user_id');
@@ -26,13 +34,18 @@ export class NavbarComponent implements OnInit {
         this.avatarUrl = data.avatar_url;
       }
     }
+
+    // --- LÓGICA DEL CARRITO ---
+    this.carritoService.carrito$.subscribe(productos => {
+      this.cantidadCarrito = productos.length;
+    });
   }
 
   buscar(termino: string) {
     if (termino.trim()) {
-      this.router.navigate(['/lista-productos'], { 
+      this.router.navigate(['/lista-productos'], {
         queryParams: { q: termino.trim() },
-        replaceUrl: true 
+        replaceUrl: true
       });
     } else {
        this.router.navigate(['/lista-productos'], { replaceUrl: true });

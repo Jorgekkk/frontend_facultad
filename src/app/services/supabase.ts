@@ -73,4 +73,33 @@ export class SupabaseService {
     .order('id', { ascending: false }); // Para que lo más nuevo salga primero
   return { data, error };
 }
+
+  async iniciarSesion(email: string, password: string) {
+  return await this.supabase.auth.signInWithPassword({ email, password });
+}
+
+async crearCuenta(email: string, password: string, nombreCompleto: string) {
+    const { data, error } = await this.supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          nombre_completo: nombreCompleto,
+        }
+      }
+    });
+
+    if (error) throw error;
+
+    // Si se crea correctamente en Auth, también lo guardamos en la tabla de perfiles
+    if (data.user) {
+        await this.supabase.from('perfiles').insert({
+            id: data.user.id,
+            nombre_completo: nombreCompleto,
+            email: email
+        });
+    }
+
+    return { data, error };
+  }
 }
