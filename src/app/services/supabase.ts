@@ -91,13 +91,16 @@ async crearCuenta(email: string, password: string, nombreCompleto: string) {
 
     if (error) throw error;
 
-    // Si se crea correctamente en Auth, también lo guardamos en la tabla de perfiles
+    // Si se crea correctamente en Auth, lo guardamos en perfiles
     if (data.user) {
-        await this.supabase.from('perfiles').insert({
+        const { error: perfilError } = await this.supabase.from('perfiles').insert({
             id: data.user.id,
-            nombre_completo: nombreCompleto,
-            email: email
+            nombre_completo: nombreCompleto
         });
+
+        if (perfilError) {
+             console.error('Error al crear el perfil público:', perfilError);
+        }
     }
 
     return { data, error };
