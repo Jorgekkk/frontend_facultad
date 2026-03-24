@@ -32,7 +32,7 @@
           <small>Dept: {{ p.categoria }}</small>
           <small *ngIf="p.vendedor_nombre">Vendido por: {{ p.vendedor_nombre }}</small>
         </div>
-        <button class="buy-btn" (click)="comprar(p)">Comprar ahora</button>
+        <button class="buy-btn" (click)="agregarAlCarrito(p)">Agregar al carrito</button>
       </div>
     </div>
   </section>
