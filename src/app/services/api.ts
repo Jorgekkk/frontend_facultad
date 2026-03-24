@@ -22,6 +22,10 @@ export class ApiService {
   return this.http.post<any>(`${this.pagoUrl}`, producto);
 }
 
+pagarCarrito(productos: any[]) {
+  // Lo enviamos envuelto en un objeto con la propiedad "carrito"
+  return this.http.post<any>(`${this.pagoUrl}`, { carrito: productos });
+}
   // AUTENTICACIÓN
   registrar(data: any): Observable<any> {
     // Asegúrate de que la URL termine en / si tu Django tiene APPEND_SLASH = True

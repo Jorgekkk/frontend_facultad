@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ApiService } from '../../services/api';
+// 1. Importamos Supabase en lugar de ApiService
+import { SupabaseService } from '../../services/supabase';
 
 @Component({
   selector: 'app-login',
@@ -12,32 +13,34 @@ import { ApiService } from '../../services/api';
   styleUrls: ['./login.scss']
 })
 export class LoginComponent {
-  credentials = { username: '', password: '' };
+  // 2. Supabase usa correos, así que cambiamos 'username' por 'email'
+  credentials = { email: '', password: '' };
 
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(private supabase: SupabaseService, private router: Router) {}
 
-  onLogin() {
-    this.api.login(this.credentials).subscribe({
-      next: (res: any) => {
-        // 1. Guardamos el token
-        localStorage.setItem('token', res.access);
+  async onLogin() {
+    try {
+      // 3. Iniciamos sesión directamente con Supabase
+      const { data, error } = await this.supabase.iniciarSesion(
+        this.credentials.email,
+        this.credentials.password
+      );
 
-        // 2. MAGIA: Extraemos el ID del usuario oculto dentro del token JWT
-        try {
-          const payload = JSON.parse(atob(res.access.split('.')[1]));
-          // En Django SimpleJWT, el id suele venir como 'user_id'
-          localStorage.setItem('user_id', payload.user_id);
-          console.log('ID de usuario guardado:', payload.user_id);
-        } catch(e) {
-          console.error('No se pudo decodificar el token', e);
-        }
+      if (error) {
+        alert('Credenciales incorrectas: ' + error.message);
+        return;
+      }
+
+      if (data && data.user) {
+        // 4. ¡AQUÍ ESTÁ LA MAGIA! Guardamos el UUID larguísimo y correcto
+        localStorage.setItem('user_id', data.user.id);
+        console.log('ID de usuario guardado:', data.user.id);
 
         alert('¡Bienvenido!');
         this.router.navigate(['/lista-productos']);
-      },
-      error: (err) => {
-        alert('Credenciales incorrectas');
       }
-    });
+    } catch (err) {
+      console.error('Error inesperado al iniciar sesión:', err);
+    }
   }
 }

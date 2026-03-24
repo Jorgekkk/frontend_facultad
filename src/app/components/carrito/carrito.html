@@ -1,0 +1,35 @@
+<div class="cart-layout">
+  <div class="cart-items-section">
+    <h2>Tu carrito de compras</h2>
+
+    <div *ngIf="productosCarrito.length === 0" class="empty-cart">
+      <p>Tu carrito de VEN FCC está vacío.</p>
+      <button routerLink="/lista-productos" class="btn-continue">Ver productos</button>
+    </div>
+
+    <div *ngFor="let p of productosCarrito; let i = index" class="cart-item">
+      <img [src]="p.imagen_url || 'assets/img/placeholder.png'" alt="Producto">
+      <div class="item-details">
+        <h3>{{ p.titulo }}</h3>
+        <p class="category">Categoría: {{ p.categoria }}</p>
+        <button class="btn-remove" (click)="quitarProducto(i)">Eliminar</button>
+      </div>
+      <div class="item-price">
+        {{ p.precio | currency }}
+      </div>
+    </div>
+  </div>
+
+  <div class="cart-summary-section" *ngIf="productosCarrito.length > 0">
+    <h3>Resumen del pedido</h3>
+    <div class="summary-row">
+      <span>Productos ({{ productosCarrito.length }}):</span>
+      <span>{{ totalPagar | currency }}</span>
+    </div>
+    <div class="summary-total">
+      <span>Total a pagar:</span>
+      <span>{{ totalPagar | currency }}</span>
+    </div>
+    <button class="btn-checkout" (click)="procederAlPago()">Proceder al pago</button>
+  </div>
+</div>

@@ -6,6 +6,7 @@
 }
 
 .login-container {
+  /* Imagen del edificio */
   background-image: url('../../../assets/img/Computacion.jpg'); 
   min-height: 100vh;
   width: 100%;
@@ -20,6 +21,7 @@
   align-items: center;
   z-index: 1;
 
+  /* Capa oscura para resaltar el neón */
   &::before {
     content: '';
     position: absolute;
@@ -36,11 +38,13 @@
   max-width: 420px; 
   padding: 2.5rem;
   
+  /* Glassmorphism oscuro */
   background: rgba(15, 20, 30, 0.6); 
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 20px;
   
+  /* Borde y Glow Neón Vibrante */
   border: 1px solid limegreen; 
   box-shadow: 0 0 30px limegreen, inset 0 0 12px rgba(100, 255, 100, 0.1);
   
@@ -64,13 +68,13 @@
     margin-bottom: 1rem;
   }
 
+  /* Configuramos las cajas de los logos */
   .logo-fcc {
     height: 110px; 
     width: 110px; 
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    
     filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.7));
   }
 
@@ -117,6 +121,7 @@ form {
       color: rgba(255, 255, 255, 0.6);
     }
 
+    /* Brillo verde al enfocar */
     &:focus {
       border-color: #8dc63f; 
       box-shadow: 0 0 15px rgba(141, 198, 63, 0.5);

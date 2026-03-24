@@ -6,7 +6,7 @@
   <div class="nav-fill">
     <div class="search-bar">
       <input type="text" #searchInput (input)="buscar(searchInput.value)" placeholder="Buscar productos en la FCC...">
-      
+
       <button class="search-btn" (click)="buscar(searchInput.value)">🔍</button>
     </div>
   </div>
@@ -20,10 +20,10 @@
       </div>
     </div>
 
-    <div class="nav-item cart">
+    <div class="nav-item cart" routerLink="/carrito" style="cursor: pointer;">
       <div class="cart-icon-wrapper">
         <span class="cart-icon">🛒</span>
-        <span class="cart-count">0</span>
+        <span class="cart-count">{{ cantidadCarrito }}</span>
       </div>
       <strong class="cart-text">Carrito</strong>
     </div>
