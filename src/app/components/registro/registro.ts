@@ -32,7 +32,7 @@ export class RegistroComponent {
         alert('Error al registrar: ' + (error as any).message);
       } else {
         alert('¡Cuenta creada con éxito!');
-        this.router.navigate(['/login']);
+        this.router.navigate(['/login']); // Te manda al login tras registrarte
       }
     } catch (err) {
       console.error('Error inesperado:', err);
