@@ -1,22 +1,39 @@
 <div class="main-layout">
   <aside class="sidebar">
-    <h3>Categorías</h3>
-    <ul class="category-list">
-      <li (click)="filtrar('TODOS')" class="active">Todos los productos</li>
-      <li (click)="filtrar('ELECTRONICOS')">Electrónicos</li>
-      <li (click)="filtrar('COMIDA')">Comida</li>
-      <li (click)="filtrar('DIVERSION')">Diversión</li>
-    </ul>
-    
-    <div class="sidebar-ad">
-      <p>Vende tus propios productos fácilmente.</p>
+    <h3>Departamentos</h3>
+    <div class="sidebar-links">
+      <a class="sidebar-link" [class.active]="categoriaActiva === 'TODOS'" (click)="filtrar('TODOS')">Todos</a>
+      <a class="sidebar-link" [class.active]="categoriaActiva === 'ELECTRÓNICOS'" (click)="filtrar('ELECTRÓNICOS')">Electrónicos</a>
+      <a class="sidebar-link" [class.active]="categoriaActiva === 'COMIDA'" (click)="filtrar('COMIDA')">Comida</a>
+      <a class="sidebar-link" [class.active]="categoriaActiva === 'DIVERSIÓN'" (click)="filtrar('DIVERSIÓN')">Diversión</a>
+    </div>
+
+    <div class="sidebar-sell-card">
+      <small>¿Tienes algo que vender?</small>
       <button routerLink="/publicar" class="btn-vender">Publicar Ahora</button>
     </div>
   </aside>
 
   <section class="products-content">
-    <h2>Productos de la Facultad</h2>
+    <h2>{{ terminoBusqueda ? 'Resultados de búsqueda: "' + terminoBusqueda + '"' : 'Resultados para ti' }}</h2>
+    
     <div class="products-grid">
-       </div>
+      <div *ngIf="productosFiltrados.length === 0" class="no-results">
+        No se encontraron productos que coincidan con tu búsqueda.
+      </div>
+
+      <div *ngFor="let p of productosFiltrados" class="product-card">
+        <div class="product-img-container">
+          <img [src]="p.imagen_url || 'assets/img/placeholder.png'" [alt]="p.titulo">
+        </div>
+        <div class="product-info">
+          <h3>{{ p.titulo }}</h3>
+          <div class="price">{{ p.precio | currency }}</div>
+          <small>Dept: {{ p.categoria }}</small>
+          <small *ngIf="p.vendedor_nombre">Vendido por: {{ p.vendedor_nombre }}</small>
+        </div>
+        <button class="buy-btn" (click)="comprar(p)">Comprar ahora</button>
+      </div>
+    </div>
   </section>
 </div>

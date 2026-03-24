@@ -1,62 +1,97 @@
+/* ============================================
+   TEMA HÍBRIDO VEN FCC - Pantalla de Publicación (VERSIÓN DEFINITIVA)
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 .seller-container {
-  background-color: #f0f2f5;
-  min-height: calc(100vh - 65px); /* Restamos el navbar */
+  /* ¡AHORA SÍ! LA IMAGEN DEL EDIFICIO */
+  background-image: url('../../../assets/img/queso.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 40px 20px;
+  align-items: flex-start; /* Permite hacer scroll si la pantalla es muy bajita */
+  padding: 100px 20px 50px; /* 100px de separación arriba para esquivar el Navbar */
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  z-index: 1;
+}
+
+/* Capa oscura translúcida sobre el edificio para que no lastime la vista */
+.seller-container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10, 15, 20, 0.7); 
+  z-index: -1;
 }
 
 .seller-card {
-  background: white;
+  /* EFECTO DE CRISTAL REAL (Glassmorphism) */
+  background: rgba(15, 20, 30, 0.65); 
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  
+  border: 1px solid rgba(141, 198, 63, 0.4);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(141, 198, 63, 0.1);
+
   width: 100%;
   max-width: 800px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  padding: 30px;
-  border: 1px solid #ddd;
+  border-radius: 16px; 
+  padding: 40px 35px;
+  color: white; 
 }
 
 .header {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
-  margin-bottom: 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15); 
+  padding-bottom: 20px;
+  margin-bottom: 30px;
 
-  h2 { margin: 0; font-size: 1.6rem; color: #111; }
-  p { margin: 5px 0 0; color: #565959; font-size: 0.95rem; }
+  h2 { margin: 0; font-size: 1.8rem; font-weight: 600; color: white; }
+  p { margin: 8px 0 0; color: rgba(255, 255, 255, 0.6); font-size: 0.95rem; }
 }
 
 .form-grid {
   display: flex;
-  gap: 30px;
+  gap: 40px;
   margin-bottom: 30px;
 
   @media (max-width: 768px) {
     flex-direction: column;
+    gap: 25px;
   }
 }
 
 .photo-section {
   flex: 1;
-  label { display: block; font-weight: bold; margin-bottom: 10px; color: #333; }
+  
+  label { display: block; font-weight: 500; margin-bottom: 12px; color: rgba(255, 255, 255, 0.9); }
 
   .photo-upload-box {
     width: 100%;
     aspect-ratio: 1;
-    border: 2px dashed #ccc;
-    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 12px; 
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    background: #f9f9f9;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
 
-    &:hover { background: #f0f0f0; }
+    &:hover { 
+      background: rgba(0, 0, 0, 0.6);
+      border-color: #8dc63f;
+      box-shadow: 0 0 15px rgba(141, 198, 63, 0.2);
+    }
 
     img { width: 100%; height: 100%; object-fit: cover; }
-    .placeholder { color: #666; font-size: 1.1rem; }
+    .placeholder { color: rgba(255, 255, 255, 0.6); font-size: 1.1rem; font-weight: 500; }
   }
 }
 
@@ -64,18 +99,32 @@
   flex: 2;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 }
 
 .input-group {
-  label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; font-size: 0.9rem;}
+  label { display: block; font-weight: 500; margin-bottom: 8px; color: rgba(255, 255, 255, 0.85); font-size: 0.95rem; }
+  
   input, select, textarea {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #888C8C;
-    border-radius: 4px;
-    font-size: 1rem;
-    &:focus { border-color: #007185; outline: none; box-shadow: 0 0 3px rgba(0, 113, 133, 0.5); }
+    padding: 12px 15px;
+    box-sizing: border-box; 
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px; 
+    color: white; 
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+
+    &::placeholder { color: rgba(255, 255, 255, 0.4); }
+
+    &:focus { 
+      border-color: #8dc63f; 
+      box-shadow: 0 0 15px rgba(141, 198, 63, 0.5);
+      background: rgba(0, 0, 0, 0.7);
+    }
   }
 }
 
@@ -83,30 +132,39 @@
   display: flex;
   justify-content: flex-end;
   gap: 15px;
-  border-top: 1px solid #eee;
-  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15); 
+  padding-top: 25px; 
 
   button {
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-weight: bold;
+    padding: 12px 24px; 
+    border-radius: 10px; 
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
   }
 
   .btn-cancelar {
     background: transparent;
-    border: 1px solid #d5d9d9;
-    color: #0f1111;
-    &:hover { background: #f7fafa; }
+    border: 1px solid rgba(255, 255, 255, 0.4); 
+    color: white;
+    
+    &:hover { background: rgba(255, 255, 255, 0.1); border-color: white; }
   }
 
   .btn-publicar {
-    background: #ffd814;
-    border: 1px solid #fcd200;
-    color: #0f1111;
-    min-width: 150px;
-    &:hover { background: #f7ca00; }
-    &:disabled { opacity: 0.6; cursor: not-allowed; }
+    background: linear-gradient(90deg, #556b2f 0%, #8dc63f 100%);
+    border: none;
+    color: white;
+    min-width: 160px;
+    
+    &:hover { 
+      background: linear-gradient(90deg, #435726 0%, #7ab32f 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(141, 198, 63, 0.6);
+    }
+    
+    &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
   }
 }

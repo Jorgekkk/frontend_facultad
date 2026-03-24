@@ -1,3 +1,4 @@
+/* registro.scss - TEMA OSCURO CCO5 CON LOGOS A COLOR */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
 :host {
@@ -6,16 +7,14 @@
 }
 
 .login-container {
-  /* ¡Recuerda cambiar esta URL por tu imagen! */
-  background-image: url('/public/img/queso.jpg'); /* Reemplaza con la URL de tu imagen */
-  height: 100vh;      /* Altura total de la pantalla */
-  width: 100vw;       /* Ancho total de la pantalla */
-  position: fixed;    /* Lo fija para que no se mueva */
-  top: 0;
-  left: 0;
-
-  background-size: cover;       /* Estira la imagen para llenar todo */
-  background-position: center;  /* Centra la imagen */
+  /* Imagen del edificio Computacion.jpg */
+  background-image: url('../../../assets/img/Computacion.jpg'); 
+  min-height: 100vh;
+  width: 100%;
+  position: relative; 
+  
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
 
   display: flex;
@@ -23,12 +22,11 @@
   align-items: center;
   z-index: 1;
 
-  /* Capa de contraste */
   &::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.4); /* Un poco más oscuro para que resalte el blanco */
+    background: rgba(10, 15, 20, 0.9); 
     z-index: -1;
   }
 }
@@ -37,25 +35,67 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 400px; // Tamaño ideal de tarjeta
+  max-width: 420px; 
   padding: 2.5rem;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  
+  /* Glassmorphism Mate Oscuro */
+  background: rgba(15, 20, 30, 0.6); 
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-  box-sizing: border-box; // <--- ESTO EVITA QUE LOS HIJOS SE SALGAN
+  
+  /* Borde y Glow Neón Vibrante (Limegreen) */
+  border: 1px solid limegreen; 
+  box-shadow: 0 0 30px limegreen, inset 0 0 12px rgba(100, 255, 100, 0.1);
+  
+  box-sizing: border-box; 
   text-align: center;
   color: white;
+}
+
+.brand-header {
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .logos-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem; 
+    margin-bottom: 1rem;
+  }
+
+  .logo-fcc {
+    height: 110px; 
+    width: 110px; 
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.7));
+  }
+
+  .logo-buap-img {
+    background-image: url('../../../assets/img/LogoBuap.png');
+  }
+
+  .logo-escudo-img {
+    background-image: url('../../../assets/img/fcc_logo.png');
+  }
+
+  h1 { font-size: 1.8rem; margin-bottom: 5px; font-weight: 600; color: white; margin-top: 0;}
+  p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); margin-bottom: 1rem; }
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.3rem; 
   width: 100%;
   box-sizing: border-box;
+  margin-top: 1rem;
 }
 
 .input-group {
@@ -64,18 +104,26 @@ form {
   box-sizing: border-box;
 
   input {
-    width: 100%; // Ocupa el 100% del ancho de la tarjeta
-    padding: 12px 12px 12px 45px; // Espacio para el icono
-    box-sizing: border-box; // <--- FUNDAMENTAL para que el padding no lo estire
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: 100%; 
+    padding: 14px 12px 14px 45px; 
+    box-sizing: border-box; 
+    
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.35); 
     border-radius: 10px;
-    color: white;
-    font-size: 1rem;
+    color: white; 
+    font-size: 0.95rem;
     outline: none;
+    transition: all 0.3s ease;
 
     &::placeholder {
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    &:focus {
+      border-color: #8dc63f; 
+      box-shadow: 0 0 15px rgba(141, 198, 63, 0.5);
+      background: rgba(0, 0, 0, 0.8);
     }
   }
 
@@ -86,50 +134,60 @@ form {
     transform: translateY(-50%);
     display: flex;
     align-items: center;
-    color: white;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s ease;
+    
+    /* ¡ESTA LÍNEA ES LA QUE CONTROLA EL HOYO NEGRO! */
+    svg.brand-small-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  input:focus + .input-icon,
+  &:focus-within .input-icon {
+    color: #8dc63f;
   }
 }
 
 .login-button {
   width: 100%;
-  padding: 12px;
-  background-color: #556b2f;
+  padding: 14px;
+  background: linear-gradient(90deg, #556b2f 0%, #8dc63f 100%);
   color: white;
   border: none;
   border-radius: 10px;
   font-size: 1.1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-top: 0.5rem;
 
   &:hover {
-    background-color: #435726;
+    background: linear-gradient(90deg, #435726 0%, #7ab32f 100%);
     transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(141, 198, 63, 0.6);
   }
 }
 
 .form-footer {
   margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
 
   a {
-    color: #ffffff;
+    color: #8dc63f; 
     text-decoration: none;
     transition: color 0.3s ease;
-    font-weight: 400;
+    font-weight: 500;
 
     &:hover {
       text-decoration: underline;
-      color: #e0e0e0;
-    }
-
-    &.create-account {
-        font-weight: 500;
+      color: #a5df53;
     }
   }
 }
@@ -137,9 +195,11 @@ form {
 @media (max-width: 480px) {
   .login-card {
     padding: 2rem 1.5rem;
-  }
-
-  .brand-header h1 {
-    font-size: 1.5rem;
+    border: none; 
+    border-radius: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }

@@ -12,16 +12,17 @@ import { ApiService } from '../../services/api';
   styleUrls: ['./registro.scss']
 })
 export class RegistroComponent {
-onRegistro() {
-throw new Error('Method not implemented.');
-}
-  user = { username: '', email: '', password: '' };
-registroData: any;
+  
+  registroData = { 
+    username: '', 
+    email: '', 
+    password: '' 
+  };
 
   constructor(private api: ApiService, private router: Router) {}
 
-  onRegister() {
-    this.api.registrar(this.user).subscribe({
+  onRegistro() {
+    this.api.registrar(this.registroData).subscribe({
       next: (res) => {
         alert('¡Usuario creado con éxito!');
         this.router.navigate(['/login']); // Te manda al login tras registrarte
