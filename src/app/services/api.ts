@@ -6,9 +6,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private productosUrl = 'http://127.0.0.1:8000/api/productos/';
-  private pagoUrl = 'http://127.0.0.1:8000/api/crear-pago/'; // URL para Mercado Pago
-  private usuariosUrl = 'http://127.0.0.1:8000/api/usuarios';
+  // URLs actualizadas apuntando a tu servidor de Railway en producción
+  private productosUrl = 'https://backendfacultad-production.up.railway.app/api/productos/';
+  private pagoUrl = 'https://backendfacultad-production.up.railway.app/api/crear-pago/';
+  private usuariosUrl = 'https://backendfacultad-production.up.railway.app/api/usuarios';
 
   constructor(private http: HttpClient) { }
 
