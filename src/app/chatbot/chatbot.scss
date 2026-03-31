@@ -1,0 +1,141 @@
+.chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  font-family: 'Poppins', sans-serif;
+}
+
+.chat-fab {
+  background-color: #556b2f;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 15px 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    background-color: #435726;
+  }
+}
+
+.chat-window {
+  width: 320px;
+  height: 450px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-header {
+  background-color: #556b2f;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .header-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .bot-icon {
+      font-size: 1.5rem;
+    }
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  p {
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    max-width: 85%;
+  }
+
+  .mensaje-bot p {
+    background-color: #e0e0e0;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 3px;
+  }
+
+  .mensaje-usuario p {
+    background-color: #556b2f;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 3px;
+  }
+
+  .escribiendo {
+    font-style: italic;
+    opacity: 0.7;
+  }
+}
+
+.chat-input {
+  display: flex;
+  padding: 10px;
+  background: white;
+  border-top: 1px solid #eee;
+
+  input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    font-size: 0.9rem;
+
+    &:focus {
+      border-color: #556b2f;
+    }
+  }
+
+  .send-btn {
+    background-color: #556b2f;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 0 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-weight: 500;
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}

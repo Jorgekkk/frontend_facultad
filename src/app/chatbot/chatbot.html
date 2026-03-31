@@ -1,0 +1,36 @@
+<div class="chatbot-container">
+  <div class="chat-window" *ngIf="abierto">
+    <div class="chat-header">
+      <div class="header-info">
+        <span class="bot-icon">🤖</span>
+        <h3>Asistente VEN FCC</h3>
+      </div>
+      <button class="close-btn" (click)="toggleChat()">✖</button>
+    </div>
+
+    <div class="chat-messages">
+      <div *ngFor="let msj of mensajes"
+           [ngClass]="{'mensaje-usuario': msj.emisor === 'usuario', 'mensaje-bot': msj.emisor === 'bot'}">
+        <p>{{ msj.texto }}</p>
+      </div>
+
+      <div class="mensaje-bot" *ngIf="cargando">
+        <p class="escribiendo">Escribiendo...</p>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input
+        type="text"
+        [(ngModel)]="mensajeUsuario"
+        (keyup.enter)="enviarMensaje()"
+        placeholder="Escribe un mensaje..."
+      >
+      <button class="send-btn" (click)="enviarMensaje()" [disabled]="cargando">Enviar</button>
+    </div>
+  </div>
+
+  <button class="chat-fab" (click)="toggleChat()" *ngIf="!abierto">
+    💬 Ayuda
+  </button>
+</div>

@@ -10,6 +10,7 @@ export class ApiService {
   private productosUrl = 'https://backendfacultad-production.up.railway.app/api/productos/';
   private pagoUrl = 'https://backendfacultad-production.up.railway.app/api/crear-pago/';
   private usuariosUrl = 'https://backendfacultad-production.up.railway.app/api/usuarios';
+  private chatUrl = 'https://web-production-257e2.up.railway.app/api/chat';
 
   constructor(private http: HttpClient) { }
 
@@ -36,4 +37,8 @@ pagarCarrito(productos: any[]) {
   login(data: any): Observable<any> {
     return this.http.post(`${this.usuariosUrl}/login/`, data);
   }
+
+  enviarMensajeChat(texto: string): Observable<any> {
+  return this.http.post<any>(this.chatUrl, { texto: texto });
+}
 }
