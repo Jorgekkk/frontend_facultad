@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api';
 import { SupabaseService } from '../../services/supabase';
-// IMPORTANTE: Importamos tu nuevo servicio del carrito
+import { ResenasModalComponent } from '../resenas-modal/resenas-modal';
 import { CarritoService } from '../../services/carrito';
 
 declare var MercadoPago: any;
@@ -11,23 +11,26 @@ declare var MercadoPago: any;
 @Component({
   selector: 'app-lista-productos',
   standalone: true,
-  imports: [CommonModule, RouterModule],
-  // Nos quedamos con tu versión limpia: archivos separados
+  imports: [CommonModule, RouterModule, ResenasModalComponent],
   templateUrl: './lista-productos.html',
-  styleUrl: './lista-productos.scss' 
+  styleUrl: './lista-productos.scss'
 })
 export class ListaProductosComponent implements OnInit {
   productos: any[] = [];
   productosFiltrados: any[] = [];
   categoriaActiva: string = 'TODOS';
   terminoBusqueda: string = '';
+
+  // Variable para controlar qué producto se abre en el modal
+  productoSeleccionadoParaResenas: any = null;
+
   private publicKey = 'APP_USR-03f348b7-b561-4164-8cff-0133a870aa06';
 
   constructor(
     private api: ApiService,
     private route: ActivatedRoute,
     private supabase: SupabaseService,
-    private carritoService: CarritoService // Inyectamos el servicio
+    private carritoService: CarritoService
   ) {}
 
   async ngOnInit() {
@@ -72,9 +75,18 @@ export class ListaProductosComponent implements OnInit {
     this.productosFiltrados = resultados;
   }
 
-  // IMPORTANTE: Esta es la nueva función que guarda el producto en memoria
   agregarAlCarrito(producto: any) {
     this.carritoService.agregarProducto(producto);
     alert(`¡${producto.titulo} agregado al carrito! 🛒`);
+  }
+
+  // --- NUEVAS FUNCIONES PARA EL MODAL DE RESEÑAS ---
+
+  abrirResenas(producto: any) {
+    this.productoSeleccionadoParaResenas = producto;
+  }
+
+  cerrarResenas() {
+    this.productoSeleccionadoParaResenas = null;
   }
 }

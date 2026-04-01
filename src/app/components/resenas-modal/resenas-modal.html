@@ -1,0 +1,43 @@
+<div class="modal-overlay" (click)="cerrarModal.emit()">
+
+  <div class="modal-box" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h2>Reseñas de {{ producto.titulo }}</h2>
+      <button class="btn-cerrar" (click)="cerrarModal.emit()">✖</button>
+    </div>
+
+    <div class="form-resena">
+      <h3>Deja tu opinión</h3>
+      <input type="text" placeholder="Tu nombre" [(ngModel)]="nuevaResena.nombreUsuario">
+
+      <select [(ngModel)]="nuevaResena.calificacion">
+        <option [ngValue]="5">⭐⭐⭐⭐⭐ Excelente</option>
+        <option [ngValue]="4">⭐⭐⭐⭐ Muy bueno</option>
+        <option [ngValue]="3">⭐⭐⭐ Regular</option>
+        <option [ngValue]="2">⭐⭐ Malo</option>
+        <option [ngValue]="1">⭐ Pésimo</option>
+      </select>
+
+      <textarea placeholder="¿Qué te pareció el producto?" [(ngModel)]="nuevaResena.comentario"></textarea>
+      <button class="btn-enviar" (click)="enviarResena()">Publicar Reseña</button>
+    </div>
+
+    <hr>
+
+    <div class="lista-resenas">
+      <p *ngIf="cargando">Cargando comentarios...</p>
+      <p *ngIf="!cargando && resenas.length === 0">Aún no hay reseñas. ¡Sé el primero!</p>
+
+      <div class="resena-item" *ngFor="let resena of resenas">
+        <div class="resena-head">
+          <strong>{{ resena.nombreUsuario }}</strong>
+          <span class="estrellas">{{ '⭐'.repeat(resena.calificacion) }}</span>
+        </div>
+        <p class="comentario-texto">{{ resena.comentario }}</p>
+        <small>{{ resena.fecha | date:'shortDate' }}</small>
+      </div>
+    </div>
+
+  </div>
+</div>

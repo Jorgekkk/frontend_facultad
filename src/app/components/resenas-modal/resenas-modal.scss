@@ -1,0 +1,122 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  /* 1. Oscurecemos el fondo significativamente */
+  background-color: rgba(0, 0, 0, 0.8);
+
+  /* 2. Efecto de desenfoque para resaltar el modal */
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* 3. Z-index muy alto para estar encima de todo (navbar, chatbot, etc) */
+  z-index: 9999;
+}
+
+.modal-box {
+  background: white;
+  width: 90%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 16px; /* Un poco más redondeado para mejor estética */
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Sombra más profunda */
+  animation: fadeIn 0.3s ease-out; /* Pequeña animación de entrada */
+}
+
+/* Animación sencilla para que el modal no aparezca de golpe */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+
+  h2 { margin: 0; font-size: 1.3rem; color: #1a202c; font-weight: 700; }
+  .btn-cerrar {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #a0aec0;
+    transition: color 0.2s;
+    &:hover { color: #e53e3e; }
+  }
+}
+
+.form-resena {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 25px;
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 10px;
+
+  h3 { font-size: 1rem; margin-bottom: 5px; color: #4a5568; }
+
+  input, select, textarea {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    &:focus { outline: none; border-color: #8dc63f; box-shadow: 0 0 0 3px rgba(141, 198, 63, 0.2); }
+  }
+
+  .btn-enviar {
+    background: linear-gradient(90deg, #556b2f 0%, #8dc63f 100%);
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s;
+    &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(141, 198, 63, 0.3); }
+    &:active { transform: translateY(0); }
+  }
+}
+
+.resena-item {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #edf2f7;
+
+  .resena-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    strong { color: #2d3748; font-size: 0.95rem; }
+    .estrellas { color: #f6ad55; font-size: 0.9rem; }
+  }
+
+  .comentario-texto {
+    margin: 0 0 8px 0;
+    color: #4a5568;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  small { color: #a0aec0; font-size: 0.75rem; }
+}
+
+/* Scrollbar personalizado para el modal */
+.modal-box::-webkit-scrollbar { width: 6px; }
+.modal-box::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }

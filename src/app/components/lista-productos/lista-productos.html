@@ -16,7 +16,7 @@
 
   <section class="products-content">
     <h2>{{ terminoBusqueda ? 'Resultados de búsqueda: "' + terminoBusqueda + '"' : 'Resultados para ti' }}</h2>
-    
+
     <div class="products-grid">
       <div *ngIf="productosFiltrados.length === 0" class="no-results">
         No se encontraron productos que coincidan con tu búsqueda.
@@ -32,8 +32,20 @@
           <small>Dept: {{ p.categoria }}</small>
           <small *ngIf="p.vendedor_nombre">Vendido por: {{ p.vendedor_nombre }}</small>
         </div>
-        <button class="buy-btn" (click)="agregarAlCarrito(p)">Agregar al carrito</button>
+
+        <div class="product-actions">
+          <button class="buy-btn" (click)="agregarAlCarrito(p)">Agregar al carrito</button>
+
+          <button class="review-btn" (click)="abrirResenas(p)">⭐ Ver Reseñas</button>
+        </div>
+
       </div>
     </div>
   </section>
 </div>
+
+<app-resenas-modal
+  *ngIf="productoSeleccionadoParaResenas"
+  [producto]="productoSeleccionadoParaResenas"
+  (cerrarModal)="cerrarResenas()">
+</app-resenas-modal>
