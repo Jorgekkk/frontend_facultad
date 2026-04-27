@@ -194,6 +194,7 @@
   overflow: hidden;
   margin-bottom: 15px;
   background: #f8f9fa;
+  position: relative;
 }
 
 .product-img-container img {
@@ -252,4 +253,32 @@
   .sidebar-links { flex-direction: row; overflow-x: auto; white-space: nowrap; gap: 15px; padding-bottom: 10px;}
   .sidebar-sell-card { display: none; }
   .products-content { width: 100%; padding: 20px; }
+}
+
+.btn-favorito {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+  z-index: 5; /* Asegura que flote sobre la foto */
+}
+
+.btn-favorito:hover {
+  transform: scale(1.15);
+  background: white;
+}
+
+.btn-favorito:active {
+  transform: scale(0.9);
 }

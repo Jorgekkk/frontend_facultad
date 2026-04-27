@@ -26,6 +26,8 @@ export class ListaProductosComponent implements OnInit {
 
   private publicKey = 'APP_USR-03f348b7-b561-4164-8cff-0133a870aa06';
 
+  misFavoritos: string[] = [];
+
   constructor(
     private api: ApiService,
     private route: ActivatedRoute,
@@ -42,7 +44,36 @@ export class ListaProductosComponent implements OnInit {
         this.terminoBusqueda = params['q'] || '';
         this.aplicarFiltros();
       });
+
+      this.cargarFavoritos();
     }
+  }
+
+  cargarFavoritos() {
+    this.api.getFavoritos().subscribe({
+      next: (res) => {
+        this.misFavoritos = res.productoIds || [];
+      },
+      error: (err) => console.error("Error al cargar favoritos gRPC:", err)
+    });
+  }
+
+  esFavorito(productoId: string): boolean {
+    return this.misFavoritos.includes(productoId.toString());
+  }
+
+  darCorazon(productoId: any) {
+    const idStr = productoId.toString();
+    this.api.toggleFavorito(idStr).subscribe({
+      next: (res) => {
+        if (res.esFavorito) {
+          this.misFavoritos.push(idStr); 
+        } else {
+          this.misFavoritos = this.misFavoritos.filter(id => id !== idStr); 
+        }
+      },
+      error: (err) => console.error("Error en toggle favorito:", err)
+    });
   }
 
   filtrar(categoria: string) {
@@ -53,9 +84,11 @@ export class ListaProductosComponent implements OnInit {
   aplicarFiltros() {
     let resultados = this.productos;
 
-    if (this.categoriaActiva !== 'TODOS') {
+    if (this.categoriaActiva === 'FAVORITOS') {
+      resultados = resultados.filter(p => this.esFavorito(p.id));
+    } 
+    else if (this.categoriaActiva !== 'TODOS') {
       const catBuscada = this.categoriaActiva.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
-
       resultados = resultados.filter(p => {
         if (!p.categoria) return false;
         const catProducto = p.categoria.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
@@ -79,8 +112,6 @@ export class ListaProductosComponent implements OnInit {
     this.carritoService.agregarProducto(producto);
     alert(`¡${producto.titulo} agregado al carrito! 🛒`);
   }
-
-  // --- NUEVAS FUNCIONES PARA EL MODAL DE RESEÑAS ---
 
   abrirResenas(producto: any) {
     this.productoSeleccionadoParaResenas = producto;

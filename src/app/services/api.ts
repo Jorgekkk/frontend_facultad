@@ -6,32 +6,35 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  // URLs actualizadas apuntando a tu servidor de Railway en producción
   private productosUrl = 'https://backendfacultad-production.up.railway.app/api/productos/';
   private pagoUrl = 'https://backendfacultad-production.up.railway.app/api/crear-pago/';
   private usuariosUrl = 'https://backendfacultad-production.up.railway.app/api/usuarios';
   private chatUrl = 'https://web-production-257e2.up.railway.app/api/chat';
   private resenasUrl = 'https://microservice-revews.vercel.app/api/resenas';
-
+  private favoritosUrl = 'https://microservicio-favoritos.vercel.app/api/favoritos';
+  
   constructor(private http: HttpClient) { }
 
   getProductos(): Observable<any[]> {
     return this.http.get<any[]>(this.productosUrl);
   }
 
+  getUsuarioActualId(): string {
+    const userId = localStorage.getItem('user_id');
+    return userId ? userId : 'invitado';
+  }
+
   // MERCADO PAGO
   crearPreferencia(producto: any) {
-  // Enviamos el objeto producto completo que contiene titulo y precio
-  return this.http.post<any>(`${this.pagoUrl}`, producto);
-}
+    return this.http.post<any>(`${this.pagoUrl}`, producto);
+  }
 
-pagarCarrito(productos: any[]) {
-  // Lo enviamos envuelto en un objeto con la propiedad "carrito"
-  return this.http.post<any>(`${this.pagoUrl}`, { carrito: productos });
-}
+  pagarCarrito(productos: any[]) {
+    return this.http.post<any>(`${this.pagoUrl}`, { carrito: productos });
+  }
+
   // AUTENTICACIÓN
   registrar(data: any): Observable<any> {
-    // Asegúrate de que la URL termine en / si tu Django tiene APPEND_SLASH = True
     return this.http.post(`${this.usuariosUrl}/registro/`, data);
   }
 
@@ -40,16 +43,29 @@ pagarCarrito(productos: any[]) {
   }
 
   enviarMensajeChat(texto: string): Observable<any> {
-  return this.http.post<any>(this.chatUrl, { texto: texto });
-}
+    return this.http.post<any>(this.chatUrl, { texto: texto });
+  }
 
-// Función para TRAER las reseñas de un producto
+  // RESEÑAS
   getResenas(productoId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.resenasUrl}/${productoId}`);
   }
 
-  // Función para GUARDAR una reseña nueva
   crearResena(datosResena: any): Observable<any> {
     return this.http.post<any>(this.resenasUrl, datosResena);
+  }
+
+  // FAVORITOS
+  getFavoritos(): Observable<any> {
+    const id = this.getUsuarioActualId();
+    return this.http.get<any>(`${this.favoritosUrl}/${id}`);
+  }
+
+  toggleFavorito(productoId: string): Observable<any> {
+    const id = this.getUsuarioActualId();
+    return this.http.post<any>(`${this.favoritosUrl}/toggle`, {
+      usuarioId: id,
+      productoId: productoId
+    });
   }
 }
