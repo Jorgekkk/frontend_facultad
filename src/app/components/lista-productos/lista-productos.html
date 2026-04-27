@@ -6,6 +6,11 @@
       <a class="sidebar-link" [class.active]="categoriaActiva === 'ELECTRÓNICOS'" (click)="filtrar('ELECTRÓNICOS')">Electrónicos</a>
       <a class="sidebar-link" [class.active]="categoriaActiva === 'COMIDA'" (click)="filtrar('COMIDA')">Comida</a>
       <a class="sidebar-link" [class.active]="categoriaActiva === 'DIVERSIÓN'" (click)="filtrar('DIVERSIÓN')">Diversión</a>
+    
+      <hr style="border: none; border-top: 1px solid rgba(141, 198, 63, 0.3); margin: 10px 0;">
+      <a class="sidebar-link" [class.active]="categoriaActiva === 'FAVORITOS'" (click)="filtrar('FAVORITOS')">
+        Mis Favoritos
+      </a>
     </div>
 
     <div class="sidebar-sell-card">
@@ -25,6 +30,10 @@
       <div *ngFor="let p of productosFiltrados" class="product-card">
         <div class="product-img-container">
           <img [src]="p.imagen_url || 'assets/img/placeholder.png'" [alt]="p.titulo">
+          
+          <button class="btn-favorito" (click)="darCorazon(p.id)">
+            {{ esFavorito(p.id) ? '❤️' : '🤍' }}
+          </button>
         </div>
         <div class="product-info">
           <h3>{{ p.titulo }}</h3>
