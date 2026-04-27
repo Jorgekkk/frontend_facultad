@@ -20,21 +20,16 @@ export class App implements OnInit {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
-
-      const urlActual = event.urlAfterRedirects || event.url;
-
-      if (urlActual === '/' || urlActual.includes('/login') || urlActual.includes('/registro')) {
-        this.mostrarNavbar = false;
-      } else {
-        this.mostrarNavbar = true;
-      }
-
+      this.evaluarRutas(event.urlAfterRedirects || event.url);
     });
   }
 
   ngOnInit() {
-    const urlActual = this.router.url;
-    if (urlActual === '/' || urlActual.includes('/login') || urlActual.includes('/registro')) {
+    this.evaluarRutas(this.router.url);
+  }
+
+   private evaluarRutas(url: string) {
+    if (url === '/' || url.includes('/login') || url.includes('/registro') || url.includes('/perfil')) {
       this.mostrarNavbar = false;
     } else {
       this.mostrarNavbar = true;
