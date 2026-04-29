@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router'; // Router importado
 import { SupabaseService } from '../../services/supabase';
 
 @Component({
@@ -17,15 +17,15 @@ export class PerfilComponent implements OnInit {
   fileParaSubir: File | null = null;
   userId: string = '';
 
-  constructor(private supabase: SupabaseService) {}
+  // Inyectamos el Router en el constructor
+  constructor(private supabase: SupabaseService, private router: Router) {}
 
   ngOnInit() {
     this.userId = localStorage.getItem('user_id') || '';
 
-    // Verificación de seguridad: si no hay ID o si parece un número falso (como el '2')
     if (!this.userId || this.userId === '2') {
       alert('Error: Sesión no válida. Por favor, vuelve a iniciar sesión.');
-      // Opcional: podrías redirigir al login aquí
+      this.router.navigate(['/login']); // Redirigir si no es válido
     } else {
       this.cargarDatosPerfil();
     }
@@ -59,7 +59,6 @@ export class PerfilComponent implements OnInit {
 
     try {
       let urlAvatar = this.fotoPreview;
-
       if (this.fileParaSubir) {
         urlAvatar = await this.supabase.subirAvatar(this.fileParaSubir, this.userId);
       }
@@ -70,13 +69,16 @@ export class PerfilComponent implements OnInit {
       });
 
       alert('¡Perfil actualizado con éxito!');
-
-      // Actualizamos el nombre en el Navbar de inmediato (opcional, pero buena práctica)
       window.location.reload();
-
     } catch (error) {
       console.error('Error al guardar:', error);
       alert('Hubo un error al actualizar el perfil');
     }
+  }
+
+  // NUEVA FUNCIÓN: Cerrar Sesión
+  cerrarSesion() {
+    localStorage.clear(); // Limpia toda la memoria (user_id, carrito, etc)
+    this.router.navigate(['/login']); // Nos manda al login
   }
 }

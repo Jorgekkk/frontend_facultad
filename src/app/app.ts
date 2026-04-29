@@ -15,6 +15,7 @@ export class App implements OnInit {
   protected readonly title = signal('frontend_facultad');
 
   mostrarNavbar: boolean = false;
+  mostrarChatbot: boolean = true; // <-- NUEVA VARIABLE
 
   constructor(private router: Router) {
     this.router.events.pipe(
@@ -29,10 +30,19 @@ export class App implements OnInit {
   }
 
    private evaluarRutas(url: string) {
+    // 1. Lógica para mostrar/ocultar el Navbar (como ya lo tenías)
     if (url === '/' || url.includes('/login') || url.includes('/registro') || url.includes('/perfil')) {
       this.mostrarNavbar = false;
     } else {
       this.mostrarNavbar = true;
+    }
+
+    // 2. Lógica para mostrar/ocultar el Chatbot
+    // Lo ocultamos en login y registro, pero sí se mostrará en el perfil y la tienda
+    if (url === '/' || url.includes('/login') || url.includes('/registro')) {
+      this.mostrarChatbot = false;
+    } else {
+      this.mostrarChatbot = true;
     }
   }
 }

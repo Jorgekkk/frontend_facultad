@@ -4,4 +4,6 @@
 
 <router-outlet></router-outlet>
 
-<app-chatbot></app-chatbot>
+@if (mostrarChatbot) {
+  <app-chatbot></app-chatbot>
+}
